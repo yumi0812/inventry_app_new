@@ -1,0 +1,39 @@
+name: Deploy Angular to Azure App Service
+
+on:
+  push:
+    branches: [ main ]
+    paths: [ 'inbentory_app/stock-app/**' ]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: 'inbentory_app/stock-app/package-lock.json'
+        
+    - name: Install dependencies
+      run: |
+        cd inbentory_app/stock-app
+        npm ci
+        
+    - name: Build Angular app
+      run: |
+        cd inbentory_app/stock-app
+        npm run build:spa
+        
+    - name: Deploy to Azure App Service
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'inventory-web-yumi-dev'
+        slot-name: 'production'
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_WEB }}
+        package: 'inbentory_app/stock-app/dist/stock-app/browser'
