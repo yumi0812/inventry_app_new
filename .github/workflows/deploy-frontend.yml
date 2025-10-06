@@ -28,23 +28,65 @@ jobs:
         cd inbentory_app/stock-app
         npm run build:spa
         
-    - name: Copy necessary files to build output
+    - name: Create server.js for Azure deployment
       run: |
         cd inbentory_app/stock-app
-        cp src/web.config dist/stock-app/browser/ || echo "web.config not found or already copied"
-        cp server.js dist/stock-app/
-        cp package.json dist/stock-app/
-        cp package-lock.json dist/stock-app/
+        cat > dist/stock-app/server.js << 'EOF'
+        const express = require('express');
+        const path = require('path');
+        const app = express();
+
+        // 静的ファイルの配信
+        app.use(express.static(path.join(__dirname, 'browser')));
+
+        // SPA用のフォールバック - すべてのルートをindex.htmlにリダイレクト
+        app.get('*', (req, res) => {
+          res.sendFile(path.join(__dirname, 'browser/index.html'));
+        });
+
+        const port = process.env.PORT || 8080;
+        app.listen(port, () => {
+          console.log(`Server running on port ${port}`);
+        });
+        EOF
+        
+    - name: Create production package.json
+      run: |
+        cd inbentory_app/stock-app
+        cat > dist/stock-app/package.json << 'EOF'
+        {
+          "name": "stock-app",
+          "version": "0.0.0",
+          "scripts": {
+            "start": "node server.js"
+          },
+          "dependencies": {
+            "express": "^5.1.0"
+          }
+        }
+        EOF
+        
+    - name: Install production dependencies
+      run: |
+        cd inbentory_app/stock-app/dist/stock-app
+        npm install --production
+        
+    - name: Copy web.config if exists
+      run: |
+        cd inbentory_app/stock-app
+        if [ -f src/web.config ]; then cp src/web.config dist/stock-app/browser/; fi
         
     - name: List build output
       run: |
         cd inbentory_app/stock-app
-        echo "=== Build output directory structure ==="
-        find dist -type f -name "*.html" -o -name "*.js" -o -name "*.css" | head -10
+        echo "=== Final deployment structure ==="
+        ls -la dist/stock-app/
         echo "=== Browser directory contents ==="
         ls -la dist/stock-app/browser/
-        echo "=== Index.html content preview ==="
-        head -20 dist/stock-app/browser/index.html
+        echo "=== Server.js content ==="
+        cat dist/stock-app/server.js
+        echo "=== Package.json content ==="
+        cat dist/stock-app/package.json
         
     - name: Deploy to Azure App Service
       uses: azure/webapps-deploy@v2
@@ -53,8 +95,3 @@ jobs:
         slot-name: 'production'
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_WEB }}
         package: './inbentory_app/stock-app/dist/stock-app'
-        
-    - name: Configure App Service for SPA
-      run: |
-        az webapp config set --resource-group 99TEST --name inventory-web-yumi-dev --startup-file ""
-        az webapp config appsettings set --resource-group 99TEST --name inventory-web-yumi-dev --settings SCM_DO_BUILD_DURING_DEPLOYMENT=false WEBSITE_NODE_DEFAULT_VERSION=20.x
