@@ -27,7 +27,7 @@ jobs:
     - name: Build Angular app
       run: |
         cd inbentory_app/stock-app
-        npm run build --prod
+        npm run build -- --configuration=production --output-mode=static
         
     - name: Deploy to Azure App Service
       uses: azure/webapps-deploy@v2
