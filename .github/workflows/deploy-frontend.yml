@@ -1,4 +1,14 @@
-name: Deploy Angular to Azure App Service
+name: Deploy An    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: 'inbentory_app/stock-app/package-lock.json'
+        
+    - name: Install dependencies
+      run: |
+        cd inbentory_app/stock-app
+        npm ci --legacy-peer-depsAzure App Service
 
 on:
   push:
@@ -17,18 +27,26 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '18'
-        cache: 'npm'
-        cache-dependency-path: 'inbentory_app/stock-app/package-lock.json'
         
     - name: Install dependencies
       run: |
         cd inbentory_app/stock-app
-        npm ci
+        npm install
         
     - name: Build Angular app
       run: |
         cd inbentory_app/stock-app
-        npm run build -- --configuration=spa
+        npm run build:spa
+        
+    - name: List build output
+      run: |
+        cd inbentory_app/stock-app
+        echo "=== Build output directory structure ==="
+        find dist -type f -name "*.html" -o -name "*.js" -o -name "*.css" | head -10
+        echo "=== Browser directory contents ==="
+        ls -la dist/stock-app/browser/
+        echo "=== Index.html content preview ==="
+        head -20 dist/stock-app/browser/index.html
         
     - name: Deploy to Azure App Service
       uses: azure/webapps-deploy@v2
