@@ -1,14 +1,4 @@
-name: Deploy An    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-        cache-dependency-path: 'inbentory_app/stock-app/package-lock.json'
-        
-    - name: Install dependencies
-      run: |
-        cd inbentory_app/stock-app
-        npm ci --legacy-peer-depsAzure App Service
+name: Deploy Angular to Azure App Service
 
 on:
   push:
