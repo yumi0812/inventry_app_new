@@ -29,7 +29,7 @@ jobs:
     - name: Build with Maven
       run: |
         cd inbentory_app/demo
-        ./mvnw clean package -DskipTests
+        mvn clean package -DskipTests
         
     - name: Deploy to Azure App Service
       uses: azure/webapps-deploy@v2
