@@ -11,91 +11,41 @@
       "prefix": "app",
       "architect": {
         "build": {
-  "builder": "@angular/build:application",
-  "options": {
-    "browser": "src/main.ts",
-    "polyfills": [
-      "zone.js"
-    ],
-    "tsConfig": "tsconfig.app.json",
-    "assets": [
-      {
-        "glob": "**/*",
-        "input": "public"
-      }
-    ],
-    "styles": [
-      "src/custom-theme.scss",
-      "src/styles.css"
-    ]
-  }
-},
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
+            "tsConfig": "tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": [
+              "src/custom-theme.scss",
+              "src/styles.css"
+            ]
+          },
           "configurations": {
-  "production": {
-    "fileReplacements": [
-      {
-        "replace": "src/environments/environment.ts",
-        "with": "src/environments/environment.prod.ts"
-      }
-    ],
-    "budgets": [
-      {
-        "type": "initial",
-        "maximumWarning": "500kB",
-        "maximumError": "1MB"
-      },
-      {
-        "type": "anyComponentStyle",
-        "maximumWarning": "4kB",
-        "maximumError": "8kB"
-      }
-    ],
-    "outputHashing": "all",
-    "optimization": {
-      "fonts": {
-        "inline": false
-      }
-    }
-  },
-  "spa": {
-    "fileReplacements": [
-      {
-        "replace": "src/environments/environment.ts",
-        "with": "src/environments/environment.prod.ts"
-      }
-    ],
-    "budgets": [
-      {
-        "type": "initial",
-        "maximumWarning": "500kB",
-        "maximumError": "1MB" 
-      },
-      {
-        "type": "anyComponentStyle",
-        "maximumWarning": "4kB",
-        "maximumError": "8kB"
-      }
-    ],
-    "outputHashing": "all",
-    "optimization": {
-      "fonts": {
-        "inline": false
-      }
-    }
-  },
-  "development": {
-    "fileReplacements": [
-      {
-        "replace": "src/environment/environment.ts",
-        "with": "src/environment/environment.ts"
-      }
-    ],
-    "optimization": false,
-    "extractLicenses": false,
-    "sourceMap": true
-  }
-}
-,
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2MB",
+                  "maximumError": "5MB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
           "defaultConfiguration": "production"
         },
         "serve": {
@@ -105,8 +55,7 @@
               "buildTarget": "stock-app:build:production"
             },
             "development": {
-              "buildTarget": "stock-app:build:development",
-              "proxyConfig": "proxy.conf.json"
+              "buildTarget": "stock-app:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -135,8 +84,5 @@
         }
       }
     }
-  },
-  "cli": {
-    "analytics": "e06a2656-b98b-4ba2-9826-7497dcfadd1e"
   }
 }
