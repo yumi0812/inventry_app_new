@@ -1,1 +1,0 @@
-web: java -Dspring.profiles.active=dev -Dserver.port=$PORT -jar target/*.jar
